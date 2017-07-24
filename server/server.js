@@ -27,10 +27,24 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
   console.log('New user connected.');
 
+  // socket from admin text welcome to the chat app shown when first connected
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app.',
+    createdAt: new Date().getTime()
+  });
+
+  // socket from admin text "new user joined" shown to everyone else
+  // in the chat EXCEPT the new user that joined
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined.',
+    createdAt: new Date().getTime()
+  });
+
   // server side so we can use ES6 functions
   // listen for client messages
   socket.on('createMessage', (message) => {
-    console.log('client message recieved', message);
     // emit a message to all users (io.emit does this, socket.emit sends to only 1 user)
     // *we know we are getting a from and text property from the client so we put them here
     io.emit('newMessage', {
@@ -38,6 +52,13 @@ io.on('connection', (socket) => {
       text: message.text,
       createdAt: new Date().getTime()
     });
+
+    // sends event to all other connections but the user emiting the event
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // })
   });
 
   // listen for disconnect
