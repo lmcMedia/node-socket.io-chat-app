@@ -27,24 +27,17 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
   console.log('New user connected.');
 
-  // emit an event. This event sends data from the server to the client side
-  // socket.emit('newEmail', {
-  //   from: 'chris@example.com',
-  //   text: 'Hey. Whats going on.',
-  //   createdAt: 123
-  // });
-
-  // new chat message as soon as we connect
-  socket.emit('newMessage', {
-    from: 'chris',
-    text: 'Lets chat.',
-    createdAt: 456
-  });
-
   // server side so we can use ES6 functions
   // listen for client messages
   socket.on('createMessage', (message) => {
     console.log('client message recieved', message);
+    // emit a message to all users (io.emit does this, socket.emit sends to only 1 user)
+    // *we know we are getting a from and text property from the client so we put them here
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
   });
 
   // listen for disconnect
