@@ -5,7 +5,7 @@ const socketIO = require('socket.io');
 const {generateMessage} = require('./utils/message');
 
 // path to public folder
-const public = path.join(__dirname + '/../public');
+const public = path.join(__dirname + '../public');
 
 // set up port for Heroku
 const port = process.env.PORT || 3000;
