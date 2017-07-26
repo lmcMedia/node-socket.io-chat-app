@@ -1,7 +1,7 @@
 var socket = io(); // initiate a websocket and keep it open
 
 // ES6 is only supported by Chrome at this time, so we cannot
-// use the arrow function: socket.on('connect', () => {})
+// use the arrow function on client side: socket.on('connect', () => {})
 socket.on('connect', function () {
   console.log('Connected to server.');
 
