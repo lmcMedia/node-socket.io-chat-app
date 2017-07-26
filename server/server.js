@@ -40,10 +40,12 @@ io.on('connection', (socket) => {
 
   // server side so we can use ES6 functions
   // listen for client messages
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, acknowledgementCallback) => {
+    console.log('createMessage', message);
     // emit a message to all users (io.emit does this, socket.emit sends to only 1 user)
     // *we know we are getting a from and text property from the client so we put them here
     io.emit('newMessage',  generateMessage(message.from, message.text));
+    acknowledgementCallback('This is from the server.');
   });
 
   // listen for disconnect
