@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
     // emit a message to all users (io.emit does this, socket.emit sends to only 1 user)
     // *we know we are getting a from and text property from the client so we put them here
     io.emit('newMessage',  generateMessage(message.from, message.text));
-    acknowledgementCallback('This is from the server.');
+    acknowledgementCallback();
   });
 
   socket.on('createLocationMessage', (coords) => {

@@ -45,11 +45,15 @@ socket.on('newLocationMessage', function(message) {
 // the page to refresh. we intercept the submit event here
 jQuery('#message-form').on('submit', function (event) {
   event.preventDefault(); // prevents submit event page refresh
+
+  let messageTextbox = jQuery('[name=message]');
+
   socket.emit('createMessage', {
     from: 'User',
-    text: jQuery('[name=message]').val()
+    text: messageTextbox.val()
   }, function () { // acknowledgement
-
+    // clears out the text field after sent
+    messageTextbox.val('');
   })
 });
 
@@ -58,13 +62,17 @@ var locationButton = jQuery('#send-location');
 
 // uses GeoLocation api
 locationButton.on('click', function (event) {
-  event.preventDefault();
+  event.preventDefault(); // prevents submit event page refresh
   // non-supported browsers
   if(!navigator.geolocation) {
     return alert('Geolocation not supported by your browser.');
   }
+  // only disable while the process is occuring
+  locationButton.attr('disabled', 'disabled').text('Sending location...');
 
   navigator.geolocation.getCurrentPosition(function(position) {
+    // re-enable the button after the position is fetched
+    locationButton.removeAttr('disabled').text('Send location');
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
@@ -72,5 +80,8 @@ locationButton.on('click', function (event) {
   }, function() {
     // displayed if someone prompted to share location but they click Deny
     alert('Unable to fetch location.');
+
+    // re-enable the button if user denys or other reason
+    locationButton.removeAttr('disabled').text('Send location');
   })
 });
