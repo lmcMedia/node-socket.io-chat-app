@@ -48,6 +48,10 @@ io.on('connection', (socket) => {
     acknowledgementCallback('This is from the server.');
   });
 
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newMessage', generateMessage('Admin', `${coords.latitude}, ${coords.longitude}`));
+  });
+
   // listen for disconnect
   socket.on('disconnect', () => {
     console.log('User was disconnected.');

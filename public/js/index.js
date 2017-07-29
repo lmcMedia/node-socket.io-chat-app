@@ -34,3 +34,27 @@ jQuery('#message-form').on('submit', function (event) {
 
   })
 });
+
+// saves expensive task of fetching DOM. Only once done here
+var locationButton = jQuery('#send-location');
+
+// uses GeoLocation api
+locationButton.on('click', function (event) {
+  event.preventDefault();
+  // non-supported browsers
+  if(!navigator.geolocation) {
+    return alert('Geolocation not supported by your browser.');
+  }
+
+  navigator.geolocation.getCurrentPosition(function(position) {
+    socket.emit('createLocationMessage', {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    }, function () { // acknowledgement
+
+    });
+  }, function() {
+    // displayed if someone prompted to share location but they click Deny
+    alert('Unable to fetch location.');
+  })
+});
