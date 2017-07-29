@@ -1,5 +1,24 @@
 var socket = io(); // initiate a websocket and keep it open
 
+/*
+ * Add autoscrolling to bottom of chat window
+ */
+function scrollToBottom () {
+  // selectors
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+  // heights
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+}
+
 // ES6 is only supported by Chrome at this time, so we cannot
 // use the arrow function on client side: socket.on('connect', () => {})
 socket.on('connect', function () {
@@ -25,6 +44,7 @@ socket.on('newMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
 });
 
 // listen for the Send Location button GeoLocation message
@@ -40,6 +60,7 @@ socket.on('newLocationMessage', function(message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
 })
 
 
