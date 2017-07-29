@@ -14,17 +14,20 @@ socket.on('disconnect', function () {
 
 // listen for chat message and display to screen
 socket.on('newMessage', function (message) {
-  console.log('newMessage', message);
+  let formattedTime = moment(message.createAt).format('h:mm a');
+
   // create a new list item for new messages
   let li = jQuery('<li></li>');
   // add the text
-  li.text(`${message.from}: ${message.text}`);
+  li.text(`${message.from} ${formattedTime}: ${message.text}`);
   // append to the messages <ol> on the index.html file
   jQuery('#messages').append(li);
 });
 
 // listen for the Send Location button GeoLocation message
 socket.on('newLocationMessage', function(message) {
+  let formattedTime = moment(message.createdAt).format('h:mm a');
+
   let li = jQuery('<li></li>');
   // open new tab to view Google Maps
   let a = jQuery('<a target="_blank">My Current Location</a>');
@@ -33,7 +36,7 @@ socket.on('newLocationMessage', function(message) {
   // someone from maliciously injecting code into the app
   // The methods below are considered safer because we are building
   // the tags from the dynamic data instead of injecting full tags
-  li.text(`${message.from}: `);
+  li.text(`${message.from} ${formattedTime}: `);
   a.attr('href', message.url);
   li.append(a);
 
