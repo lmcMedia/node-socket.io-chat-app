@@ -23,6 +23,24 @@ socket.on('newMessage', function (message) {
   jQuery('#messages').append(li);
 });
 
+// listen for the Send Location button GeoLocation message
+socket.on('newLocationMessage', function(message) {
+  let li = jQuery('<li></li>');
+  // open new tab to view Google Maps
+  let a = jQuery('<a target="_blank">My Current Location</a>');
+
+  // by separating the tags above into let variables, it prevents
+  // someone from maliciously injecting code into the app
+  // The methods below are considered safer because we are building
+  // the tags from the dynamic data instead of injecting full tags
+  li.text(`${message.from}: `);
+  a.attr('href', message.url);
+  li.append(a);
+
+  jQuery('#messages').append(li);
+})
+
+
 // overriding the default form submit behavior that causes
 // the page to refresh. we intercept the submit event here
 jQuery('#message-form').on('submit', function (event) {
@@ -50,8 +68,6 @@ locationButton.on('click', function (event) {
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
-    }, function () { // acknowledgement
-
     });
   }, function() {
     // displayed if someone prompted to share location but they click Deny
