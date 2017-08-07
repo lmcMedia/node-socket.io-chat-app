@@ -22,13 +22,33 @@ function scrollToBottom () {
 // ES6 is only supported by Chrome at this time, so we cannot
 // use the arrow function on client side: socket.on('connect', () => {})
 socket.on('connect', function () {
-  console.log('Connected to server.');
-
   // dont emit the events until we are connected
+  var params = jQuery.deparam(window.location.search);
+
+  // 3rd param is acknowledgement
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err); // display module here from bootstrap
+      window.location.href = '/'; // redirect user back to / page
+    } else {
+      console.log('No error');
+    }
+  });
 });
 
 socket.on('disconnect', function () {
   console.log('Disconnected from server.');
+});
+
+socket.on('updateUserList', function (users) {
+  var ol = jQuery('<ol></ol>');
+
+  users.forEach(function (user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+
+  // completely wipe the list and put new version
+  jQuery('#users').html(ol);
 });
 
 // listen for chat message and display to screen
